@@ -14,28 +14,33 @@
         if(!empty($email) && !empty($password)) {
             if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $user = (new CRUD($pdo))->select('users',[],['email'=> $email],1,'');
-                $user = $user->fetch();
+                if($user){
+                    $user = $user->fetch();
+                    if(is_array($user)){
+                        if(password_verify($password, $user['password'])) {
+    
+                            $_SESSION['logged_in'] = true;
+                            $_SESSION['email'] = $email;
+                            $_SESSION['user_id'] = $user['id'];
+                            $_SESSION['isadmin'] = $user['isadmin'];
+                            $_SESSION['name'] = $user['name'];
+                            $_SESSION['surname'] = $user['surname'];
+        
+                            header('Location: index.php');
+        
+                        } else{
+                            $errors[] = 'Wrong password';
+                        }
+                    } else {
+                        $errors[] = 'This email does not exists on our database';
+                    }
 
-                if(password_verify($password, $user['password'])) {
-
-                    $_SESSION['logged_in'] = true;
-                    $_SESSION['email'] = $email;
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['isadmin'] = $user['isadmin'];
-                    $_SESSION['name'] = $user['name'];
-                    $_SESSION['surname'] = $user['surname'];
-
-                    header('Location: index.php');
-
-                } else{
-                    $errors[] = 'Wrong password';
+                }else{
+                    $errors[] = 'Database query error!';
                 }
-
             } else{
                 $errors[] = 'Invalid Email';
             }
-
-
         } else{
             $errors[] = 'Fill email and password fields!';
         }
@@ -85,10 +90,6 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" name="password" class="form-control"  id="password">
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" name="remember" class="form-check-input" id="remember" value="1">
-                    <label for="remember" class="form-check-label">Remember me</label>
                 </div>
                 
             <button type="submit" name="login-btn" class="btn btn-success w-100">Sign In</button>

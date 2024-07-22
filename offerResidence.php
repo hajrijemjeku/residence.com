@@ -4,30 +4,33 @@
 $errors = [];
 ?>
 <?php
-// Function to get ENUM values
-// function getEnumValues($pdo, $table, $column) {
-//     $sql = "SHOW COLUMNS FROM $table LIKE '$column'";
-//     $result = $pdo->query($sql)->fetch();
-//     $enumList = substr($result['Type'], 5, (strlen($result['Type']) - 6));
-//     $enumValues = explode(",", str_replace("'", "", $enumList));
-//     return $enumValues;
-// }
-
-// Fetch the ENUM values for the 'status' column in the 'residence' table
-// $statusValues = getEnumValues($pdo, 'residence', 'status');
-
 
 if(isset($_POST['register-btn'])){
 
+    $image = time(). $_FILES['image']['name'];
+    $tempname = $_FILES['image']['tmp_name'];
+    
+
     if((!empty($_POST['title'])) && (!empty($_POST['status'])) && (!empty($_POST['neighborhood'])) && (!empty($_POST['city'])) && (!empty($_POST['street'])) && (!empty($_POST['squaremeters'])) && (!empty($_POST['rooms'])) && (!empty($_POST['price'])) && (!empty($_POST['tel'])) && (!empty($_POST['description'])) && (!empty($_POST['type'])) &&  (!empty($_POST['userid']))     ){
 
-        $insertresidence = (new CRUD($pdo)) -> insert('residence',['title','status','neighborhood','street','city','squaremeters','rooms','price', 'tel','description','typeid','userid'],[$_POST['title'],$_POST['status'],$_POST['neighborhood'],$_POST['city'],$_POST['street'],$_POST['squaremeters'],$_POST['rooms'],$_POST['price'],$_POST['tel'],$_POST['description'],$_POST['type'],$_POST['userid']]);
+
+        if(!(empty($image))){
+            $insertresidence = (new CRUD($pdo)) -> insert('residence',['title','status','neighborhood','city','street','squaremeters','rooms','price', 'tel','description','image','typeid','userid'],[$_POST['title'],$_POST['status'],$_POST['neighborhood'],$_POST['city'],$_POST['street'],$_POST['squaremeters'],$_POST['rooms'],$_POST['price'],$_POST['tel'],$_POST['description'],$image,$_POST['type'],$_POST['userid']]);
+            move_uploaded_file($tempname,'assets/images/residences/'.$image);
+
+        }else{
+            $insertresidence = (new CRUD($pdo)) -> insert('residence',['title','status','neighborhood','city','street','squaremeters','rooms','price', 'tel','description','typeid','userid'],[$_POST['title'],$_POST['status'],$_POST['neighborhood'],$_POST['city'],$_POST['street'],$_POST['squaremeters'],$_POST['rooms'],$_POST['price'],$_POST['tel'],$_POST['description'],$_POST['type'],$_POST['userid']]);
+        }
+
+
+
+        
 
         header('Location:residences.php');
 
 
     }else {
-        $errors [] = 'something went wrong';
+        $errors [] = 'Please fill all input fields!';
     }
 }
 ?>
@@ -68,26 +71,6 @@ if(isset($_POST['register-btn'])){
                             <?php endforeach; ?>
                     </select>
                 </div>
-                <!-- <div class="mb-3">
-                    <select name="status" id="status" class="form-control mb-2">
-                        <option value="">Select Status</option>
-                        <?php //foreach($statusValues as $status): ?>
-                            <option value="<?//= $status ?>"><?//= ucfirst($status) ?></option>
-                        <?php //endforeach; ?>
-                    </select>
-                     <select name="status" id="status" class="form-control mb-2">
-                        <option value="">Select Status</option>
-                        <?php
-                            //$categories = (new Crud($pdo))->select('residences', ['id','name'], [], 0, '');
-                            //$categories = $categories->fetchAll();
-                        ?>
-                        <?php //if(count($categories)> 0): ?>
-                        <?php //foreach($categories as $category): ?>
-                        
-                        <option value="<?//= $category['id'] ?>"><?//= $category['name'] ?></option>
-                        <?php //endforeach; endif; ?>
-                    </select> -->
-                <!-- </div> -->
                 <div class="mb-3">
                     <label for="neighborhood" class="form-label">Neighborhood</label>
                     <input type="text" name="neighborhood" class="form-control" id="neighborhood" required>
@@ -102,11 +85,11 @@ if(isset($_POST['register-btn'])){
                 </div>
                 <div class="mb-3">
                     <label for="squaremeters" class="form-label">SquareMeters</label>
-                    <input type="text" name="squaremeters" class="form-control" id="squaremeters" required>
+                    <input type="number" name="squaremeters" class="form-control" id="squaremeters" min="1" required>
                 </div>                
                 <div class="mb-3">
                     <label for="rooms" class="form-label">Rooms</label>
-                    <input type="number" name="rooms" class="form-control" id="rooms" required>
+                    <input type="number" name="rooms" class="form-control" id="rooms" required min="1">
                 </div>                
                 <div class="mb-3">
                     <label for="type" class="form-label">Tipi</label>
@@ -118,7 +101,7 @@ if(isset($_POST['register-btn'])){
                             
                             foreach($types as $type):
                         ?>
-                        <option value="<?= $type['id']; ?>"><?= $type['name']; ?></option>
+                        <option value="<?= $type['id']; ?>" required><?= $type['name']; ?></option>
                             <?php endforeach; ?>
                     </select>
                 </div>
@@ -128,7 +111,7 @@ if(isset($_POST['register-btn'])){
                 </div>
                 <div class="mb-3">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" class="form-control" id="price" required>
+                    <input type="text" name="price" class="form-control" id="price" min="1" required>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
@@ -147,7 +130,7 @@ if(isset($_POST['register-btn'])){
                     <input type="email" name="email" class="form-control bg-light" id="email" required value="<?=$_SESSION['email']; ?>" readonly>
                 </div>
                 
-                <button type="submit" name="register-btn" class="btn btn-primary w-100">Regjistro</button>
+                <button type="submit" name="register-btn" class="btn btn-primary w-100">Ruaj Residencen</button>
             </form>
         </div>
     </div>

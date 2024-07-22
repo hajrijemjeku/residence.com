@@ -5,30 +5,146 @@
 
 
 $errors= [];
-
-// SUBSCRIBE PART
-if(isset($_POST['subscribe'])){
-
+if(isset($_POST['subscr'])) {
     $email = $_POST['email'];
 
-    if(!empty($email)){
-        if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+    if(!empty($email)) {
+        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $crudObj = new CRUD($pdo);
-            if($subscribe = $crudObj->insert('subscribers',['email'],[$email])){
-                echo ' you subscribed';
-                header('Location:index.php');
+            $subscribers = $crudObj->select('subscribers', [], ['email'=>$email], 1, '');
+            $subscribers = $subscribers->fetch();
+
+            if(empty($subscribers)) {
+                $subscribe = $crudObj->insert('subscribers', ['email'], [$email]);
+                if($subscribe) {
+                    $errors[] = 'Subscribed successfully!!';
+                    header('Location: index.php');
+                    exit;
+                } else {
+                    $errors[] = 'Something went wrong';
+                }
+            } else {
+                $errors[] = 'This email is already subscribed';
             }
-            else{
-                $errors[] = 'something went wrong';
-            }
-        }else{
-            $errors[] = 'invalid email';
+        } else {
+            $errors[] = 'Invalid email';
         }
-    }
-    else{
-        $errors[] = 'please write email on input field';
+    } else {
+        $errors[] = 'Please enter an email address';
     }
 }
+
+// If there are errors, display them
+if(!empty($errors)) {
+    // You can choose to display errors in various ways, like alert boxes or inline messages.
+    echo '<script type="text/javascript">alert("INFO: '.$errors[0].'");</script>';
+    // Redirect to index.php if needed
+    // header('Location: ../index.php');
+    // exit;
+}
+// SUBSCRIBE PART
+// if(isset($_POST['subscribe'])){
+
+//     $email = $_POST['email'];
+
+//     if(!empty($email)){
+//         if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+//             $crudObj = new CRUD($pdo);
+//             $subscribers = $crudObj->select('subscribers',[],['email'=>$email],1,'');
+//             $subscribers = $subscribers->fetch();
+//             if(empty($subscribers) && !($subscribers['email']==$email)) {
+//                 $subscribe = $crudObj->insert('subscribers',['email'],[$email]);
+//                 if($subscribe){
+//                     echo ' you subscribed';
+//                     header('Location:index.php');
+//                 }else {
+//                     $errors[] = 'something went wrong';
+//                     header('Location:login.php');
+
+//                 }
+//                 // exit;
+//             }else if(!empty($subscribers) && ($subscribers['email']==$email)){
+               
+                
+//                 $errors[] = 'This email already subscribed';
+//                 header('Location:residences.php');
+
+//             }
+//         }else{
+//             $errors[] = 'invalid email';
+//         }
+//     }
+//     else{
+//         $errors[] = 'please write email on input field';
+//     }
+//     // header('Location:index.php');
+// }
+
+
+// if(isset($_POST['subscribe'])) {
+//     $email = $_POST['email'];
+
+//     if(!empty($email)) {
+//         if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+//             $crudObj = new CRUD($pdo);
+            
+//             // Check if email already exists in database
+//             $subscribers = $crudObj->select('subscribers', [], ['email' => $email], 1, '');
+//             $existingSubscriber = $subscribers->fetch();
+
+//             if(!$existingSubscriber) {
+//                 // Email does not exist, proceed to insert
+//                 $subscribe = $crudObj->insert('subscribers', ['email'], [$email]);
+//                 if($subscribe) {
+//                     echo 'You subscribed successfully.';
+//                     exit; // Exit after successful subscription
+//                 } else {
+//                     $errors[] = 'Something went wrong while subscribing.';
+//                 }
+//             } else {
+//                 // Email already exists in database
+//                 $errors[] = 'This email is already subscribed.';
+//             }
+//         } else {
+//             $errors[] = 'Invalid email format.';
+//         }
+//     } else {
+//         $errors[] = 'Please enter your email address.';
+//     }
+
+//     // Redirect back to index.php with errors
+//    // $_SESSION['errors'] = $errors; // Assuming you handle errors using session
+//     header('Location: index.php');
+//     exit; // Ensure script execution stops after redirection
+// }
+
+
+// if (isset($_POST['subscribe'])) {
+//     $email = $_POST['email'];
+
+//     if (!empty($email)) {
+//         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+//             $crudObj = new CRUD($pdo);
+
+//             // Insert new subscriber
+//             $subscribe = $crudObj->insert('subscribers', ['email'], [$email]);
+//             if ($subscribe === true) {
+//                 echo 'You subscribed!';
+//             } elseif ($subscribe === false) {
+//                 $errors[] = 'This email is already subscribed';
+//             } else {
+//                 $errors[] = 'Something went wrong';
+//             }
+//         } else {
+//             $errors[] = 'Invalid email';
+//         }
+//     } else {
+//         $errors[] = 'Please enter an email address';
+//     }
+// }
+
+
+
 
 
 ?>
@@ -48,13 +164,13 @@ if(isset($_POST['subscribe'])){
         </div>
         <div class="carousel-inner p-3 my-3">
             <div class="carousel-item active">
-                <img src="./assets/images/slider/1.jpg" class="d-block w-100" height="600px" alt="...">
+                <img src="./assets/images/slider/slider1.jpg" class="d-block w-100" height="600px" alt="...">
             </div>
             <div class="carousel-item">
-                <img src="./assets/images/slider/2.jpg" class="d-block w-100" height="600px" alt="...">
+                <img src="./assets/images/slider/slider2.jpg" class="d-block w-100" height="600px" alt="...">
             </div>
             <div class="carousel-item">
-                <img src="./assets/images/slider/3.jpg" class="d-block w-100" height="600px" alt="...">
+                <img src="./assets/images/slider/slider3.jpg" class="d-block w-100" height="600px" alt="...">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -85,53 +201,38 @@ if(isset($_POST['subscribe'])){
 
 
 
-
-
 <!-- SHOW ALL RESIDENCES SECTION -->
 <section class="residences py-5">
     <div class="container">
-        <h2 class="text-center">Latest Residences</h2>
-        <?php
         
-        if(!isset($_SESSION['addlimit'])){
-            $_SESSION['addlimit'] = 1;
-        }
-        if (isset($_GET['reset'])) {
-            $_SESSION['addlimit'] = 1;
-        }
-        if (isset($_GET['morebtn'])) {
-            $_SESSION['addlimit']++; // Increment $_SESSION['addlimit'] when morebtn is clicked
-        }
+        <?php
+
         $crudObj = new CRUD($pdo);
         
-        //SEARCH BY CITY
-        if(!isset($_GET['searchbycity'])){
-            if(isset($_GET['morebtn']) && !empty($_GET['morebtn'])){
-                
-                
-                $residences = $crudObj->select('residence',[],[],$_SESSION['addlimit'],'');
-                $residences = $residences->fetchAll();
-                $nrofresidences = count($residences);
-                
-
-                
-            }else{
-            
-                $residences = $crudObj->select('residence',[],[],$_SESSION['addlimit'],'');
-                $residences = $residences->fetchAll();
-                $nrofresidences = count($residences);
-            }
-            
+  
+        if(isset($_GET['searchbycity']) && !empty($_GET['inputcity'])){
+            $city = $_GET['inputcity'];
+            $residences = $crudObj->search('residence',[],['city'=>$city]);
+            $residences = $residences->fetchAll();
         }else{
-            $vlera = $_GET['inputcity'];
-            $residences = $crudObj->search('residence',[],['city'=>$vlera]);
-            $residences = $residences->fetchAll(); 
-            
-            $_SESSION['addlimit'] = 1;
-
+            $residences = $crudObj->select('residence',[],[],6,'');
+            $residences = $residences->fetchAll();
         }
+        
+        //SEARCH BY CITY
+        // $residences = $crudObj->select('residence',[],[],6,'');
+        //         $residences = $residences->fetchAll();
+        $nrofresidences = count($residences);
 
         ?>
+        <?//php if(count($residences) == 0): ?>
+            <!-- <h2 class="text-center"> (<?//= count($residences); ?>) Residences with  input: <?//= $city; ?></h2> -->
+        <?//php endif; ?>
+        <?php if(empty($city)): ?>
+            <h2 class="text-center">Latest Residences</h2>
+        <?php else: ?>
+            <h2 class="text-center"> (<?= count($residences); ?>) Residences with  input: <?= $city; ?></h2>
+        <?php endif; ?>
         <div class="row mt-4">
             <!-- <form action="<?//= $_SERVER['PHP_SELF'] ?>" method="GET"> -->
 
@@ -153,42 +254,40 @@ if(isset($_POST['subscribe'])){
 
             </div>
 
-<!-- MODAL FROM CHATGPT -->
- <!-- Modal Structure -->
- <div class="modal fade" id="addReviewModal<?= $residence['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="addReviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addReviewModalLabel<?= $residence['id'] ?>">Add a Review for <?= $residence['title']; ?></h5>
-                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        <!-- MODAL FROM CHATGPT -->
+        <!-- Modal Structure -->
+        <div class="modal fade" id="addReviewModal<?= $residence['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addReviewModalLabel<?= $residence['id'] ?>">Add a Review for <?= $residence['title']; ?></h5>
+                        <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="reviewForm" action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" id="user_id" name="user_id" value="<?= $_SESSION['user_id']?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rating">Rating:</label>
+                                <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment">Comment:</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                            </div>
+                            <input type="hidden" name="residence_id" id="residence_id" value="<?= $residence['id'] ?>">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button name="submitreview" type="submit" class="btn btn-primary">Save Review</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form id="reviewForm" action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input type="hidden" class="form-control" id="user_id" name="user_id" value="<?= $_SESSION['user_id']?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="rating">Rating:</label>
-                        <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">Comment:</label>
-                        <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
-                    </div>
-                    <input type="hidden" name="residence_id" id="residence_id" value="<?= $residence['id'] ?>">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button name="submitreview" type="submit" class="btn btn-primary">Save Review</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
-
-
 
             <?php endforeach; ?>
 
@@ -199,13 +298,13 @@ if(isset($_POST['subscribe'])){
         </div>
         <?php if(!isset($_GET['searchbycity'])): ?>
             <form action="<?php $_SERVER['PHP_SELF'] ?>">
-                <div class="row mt-5"> <?php
+                <!-- <div class="row mt-5"> <?php
                 // $nrofresidences = count($residences);
-                if($_SESSION['addlimit'] <= $nrofresidences):
+                //if($_SESSION['addlimit'] <= $nrofresidences):
                      ?>
                     <input type="submit" name="morebtn" class="btn btn-info w-25 mx-auto" value="Shiko me shume">
-                    <?php endif;?>
-                </div>
+                    <?//php endif;?>
+                </div> -->
             </form>
         
         <!-- <div class="row mt-5">
@@ -243,54 +342,54 @@ if(isset($_POST['subscribe'])){
     }?>
 
 
-        
-<!-- FILTER SECTION -->
-<section class="filter d-flex justify-content-center my-5 w-75"> 
-    <select class="form-select" aria-label="Default select example">
-        <option selected>Lloji</option>
-        <option value="1">Banese</option>
-        <option value="2">Shtepi</option>
-    </select>
-    <select class="form-select" aria-label="Default select example">
-        <option selected>Qyteti</option>
-        <option value="1">Prishtine</option>
-        <option value="2">Peje</option>
-        <option value="3">Gjilan</option>
-    </select>
-    <select class="form-select" aria-label="Default select example">
-        <option selected>Dhoma</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-    </select>
-    <select class="form-select" aria-label="Default select example">
-        <option selected>Statusi</option>
-        <option value="1">Me Qera</option>
-        <option value="2">Ne Shitje</option>
-    </select>
-</section>
 <!-- DONT HAVE AN ACCOUNT? -->
  <section class="account py-5" >
-    <div class="container">
-        <h2 class="text-center">Nuk keni llogari?</h2>
-        <div class="row mt-4">
-            <div class="col col-lg-6 col-md-6 col-sm-12 mt-5" > <!-- style="background-color: aquamarine;"-->
-                <div class="text-center py-5 my-5">
-                    <h4>Krijo llogari</h4>
-                    <p>Ne rast se nuk keni llogari, krijojeni dhe do keni qasje ne sherbimet tona.</p>
-                    <a href="register.php" class="btn btn-outline-secondary">Regjistrohu</a>
+    <?php if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true):?>
+        <div class="container">
+            <h2 class="text-center">Tashme jeni te kycur ne llogarine tuaj!</h2>
+            <div class="row mt-4">
+                <div class="col col-lg-6 col-md-6 col-sm-12 mt-5" > <!-- style="background-color: aquamarine;"-->
+                    <div class="text-center py-5 my-5">
+                        <h4>Ofro Residence!</h4>
+                        <p>Ne rast se keni residenca per te ofruar, sherbimet tona jane ne dispozicionin tuaj per t'i ofruar ato!</p>
+                        <a href="offerResidence.php" class="btn btn-lg   btn-outline-info">Ofro Residence</a>
+                    </div>
+                </div>
+                <div class="col col-lg-6 col-md-6 col-sm-12 px-5" > <!--style="background-color: beige;" -->
+                    <img src="./assets/images/slider/offerresidence.webp" alt="" height="400px">
                 </div>
             </div>
-            <div class="col col-lg-6 col-md-6 col-sm-12 px-5" > <!--style="background-color: beige;" -->
-                <img src="./assets/images/slider/1.jpg" alt="" height="400px">
+            <div class="row">
+            <div class="col-12">
+                <hr class="mx-auto mt-5 border-secondary">
+            </div>
             </div>
         </div>
-        <div class="row">
-        <div class="col-12">
-            <hr class="mx-auto mt-5 border-secondary">
+        <?php else: ?>
+        <div class="container">
+            <h2 class="text-center">Nuk keni llogari?</h2>
+            <div class="row mt-4">
+                <div class="col col-lg-6 col-md-6 col-sm-12 mt-5" > <!-- style="background-color: aquamarine;"-->
+                    <div class="text-center py-5 my-5">
+                        <h4>Krijo llogari</h4>
+                        <p>Ne rast se nuk keni llogari, krijojeni dhe do keni qasje ne sherbimet tona.</p>
+                        <a href="register.php" class="btn btn-lg   btn-outline-info">Regjistrohu</a>
+                    </div>
+                </div>
+                <div class="col col-lg-6 col-md-6 col-sm-12 px-5" > <!--style="background-color: beige;" -->
+                    <img src="./assets/images/slider/register.png" alt="" height="400px">
+                </div>
+            </div>
+            <div class="row">
+            <div class="col-12">
+                <hr class="mx-auto mt-5 border-secondary">
+            </div>
+            </div>
         </div>
-        </div>
-    </div>
+    
+        
+    <?php endif; ?>
+
     
  </section>
 
@@ -314,8 +413,9 @@ if(isset($_POST['subscribe'])){
                             <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
                                 <img src="./assets/images/residences/<?= $residence['image']; ?>" class="d-block w-100 mt-5" height="300px" alt="...">
                                 <div class="carousel-caption d-none d-md-block">
-                                    <h5><?= $residence['title']; ?></h5>
-                                    <p><?= $residence['price']; ?></p>
+                                    <h3 class="text-light bg-secondary"><?= $residence['title']; echo ", " . $residence['price'];?> &euro;
+                                
+                                    </h3>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -348,35 +448,6 @@ if(isset($_POST['subscribe'])){
     </div>
 </section>
 
-<!-- STATISTICS -->
- <!-- <section class="statistics py-5">
-    <div class="container">
-        <div class="row mt-4">
-            <div class="col col-lg-3 col-md-4 col-sm-12 border border-2 mx-auto rounded">
-                <h6>Numri perdoruesve</h6>
-                <?php $nrOfUsers = (new CRUD($pdo))->select('users',[],[],'',''); 
-                      $nrOfUsers = $nrOfUsers->fetchAll();?>
-                <p><strong><?= count($nrOfUsers) ?></strong></p>
-            </div>
-            <div class="col col-lg-3 col-md-4 col-sm-12 border border-2 mx-auto rounded">
-                <h6>Numri residencave</h6>
-                <p><strong> <?= count($residences) ?></strong></p>
-            </div>
-            <div class="col col-lg-3 col-md-4 col-sm-12 border border-2 mx-auto rounded">
-                <h6>Numri qyteteve</h6>
-                <p><strong><?php $nrOfCities = (new CRUD($pdo))->distinctSelect('residence','city'); 
-                      $nrOfCities = $nrOfCities->fetch()[0];  echo $nrOfCities;?></strong></p>
-            </div>
-        </div>
-
-    <div class="row mt-4">
-        <div class="col-12">
-            <hr class="mx-auto mt-5 border-secondary">
-        </div>
-    </div>
-    </div>
- </section> -->
-
  <!-- STATISTICS -->
  <section class="statistics py-5">
     <div class="container">
@@ -394,11 +465,13 @@ if(isset($_POST['subscribe'])){
                 <p><strong id="residencesCount" data-count="<?= count($allresidences) ?>">0</strong></p>
             </div>
             <div class="col col-lg-3 col-md-4 col-sm-12 border border-2 mx-auto rounded">
-                <h6>Numri qyteteve</h6>
-                <p><strong id="citiesCount" data-count="<?php 
-                $nrOfCities = (new CRUD($pdo))->distinctSelect('residence','city'); 
-                $nrOfCities = $nrOfCities->fetch(); 
-                echo $nrOfCities;?>">0</strong></p>
+                <h6>Numri i reviews</h6>
+                <?php 
+                $nrofReviews = (new CRUD($pdo))->select('reviews',[],[],'',''); 
+                $nrofReviews = $nrofReviews->fetchAll(); 
+                ?>
+                <p><strong id="citiesCount" data-count="<?= count($nrofReviews) ?>">0</strong></p>
+
             </div>
         </div>
         <div class="row mt-4">
@@ -440,7 +513,7 @@ if(isset($_POST['subscribe'])){
 
 
 <!-- REVIEWS -->
- <section class="reviews py-5"> <!--style="color: #000; background-color: #f3f2f2;" -->
+ <section class="reviews py-5" > <!--style="color: #000; background-color: #f3f2f2;" -->
     <div class="container">
         <div class="row justify-content-md-center">
         <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
@@ -451,19 +524,35 @@ if(isset($_POST['subscribe'])){
         </div>
     </div>
 
-    <div class="container overflow-hidden">
+    <div class="container overflow-hidden" id="review">
         <div class="row gy-4 gy-md-0 gx-xxl-5 mb-3">
         <?php
+            if(!isset($_SESSION['addlimit'])){
+                $_SESSION['addlimit'] = 3;
+            }
+            if (isset($_POST['morebtn'])) {
+                $_SESSION['addlimit'] = $_SESSION['addlimit'] + 3; // Increment $_SESSION['addlimit'] when morebtn is clicked
+                // header('Location: index.php');
+                // exit;
+            }
+            // echo($_SERVER['SCRIPT_FILENAME']);
+            // $current_script = basename($_SERVER['SCRIPT_FILENAME']);
+            // echo($current_script);
+            // if ($current_script !== "index.php") {
+            //     $_SESSION['addlimit'] = 3;
+            // }
+           
 
             //if((new Crud($pdo))->delete('order_product', 'order_id', $_GET['id']) && (new Crud($pdo))->delete('orders', 'id', $_GET['id'])){
+                // if(isset($_GET['morebtn']) && !empty($_GET['morebtn'])):
 
-            $reviews = ((new CRUD($pdo))->select('reviews',[],[],'',''));// && (new CRUD($pdo))->select('residence',[],[],'','') );
-            if($reviews):
-                $reviews = $reviews->fetchAll();
+                    $reviews = (new CRUD($pdo))->select('reviews',[],[],$_SESSION['addlimit'],'');// && (new CRUD($pdo))->select('residence',[],[],'','') );
+                    
+                    $reviews = $reviews->fetchAll();
                 
     ?>
             <?php foreach($reviews as $review): 
-                $residencereview = ((new CRUD($pdo))->select('residence',[],['id'=>$review['residence_id']],1,''));
+                $residencereview = (new CRUD($pdo))->select('residence',[],['id'=>$review['residence_id']],1,'');
                 $residencereview = $residencereview->fetch();    
             ?>
         <div class="col-12 col-md-4 mb-5">
@@ -489,8 +578,15 @@ if(isset($_POST['subscribe'])){
             </div>
         </div>
         <?php endforeach;?>
-        <?php endif;?>
+        
+
+        <?//php };?>
         </div>
+        <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
+        <input type="submit" name="morebtn" class="btn btn-info w-25 mx-auto" value="Shiko me shume">
+
+
+        </form>
         <div class="row mt-4">
             <div class="col-12">
                 <hr class="mx-auto mt-5 border-secondary">
@@ -509,18 +605,21 @@ if(isset($_POST['subscribe'])){
                 <!-- <hr class="w-50 mx-auto mb-4 border-dark-subtle"> -->
             </div>
         </div>
-        <?php foreach($errors as $error): ?>
-            <div class="alert alert-info">
-                <?= $error; endforeach; ?>
+        <?php if(count($errors) > 0): ?>
+            <div class="alert alert-warning">
+                <?php foreach($errors as $error): ?>
+                    <p class="p-0 m-0"><?= $error; ?></p>
+                <?php endforeach;?>
             </div>
+            <?php endif; ?>
         
         <div class="row mb-4">
             <div class="col-12 col-md-8 mx-auto">
                 
-                    <form method="post" action="<?php $_SERVER['PHP_SELF']; ?>">
+                    <form method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
                     <div class="input-group">
                         <input type="email" name="email" class="form-control form-control-lg rounded-start-pill" placeholder="Enter your email" aria-label="Enter your email" aria-describedby="button-addon2">
-                        <button class="btn btn-success btn-lg rounded-end-pill" name="subscribe" type="submit" id="subscribe">Subscribe</button>
+                        <button class="btn btn-success btn-lg rounded-end-pill" name="subscr" type="submit" id="subscr">Subscribe</button>
                         <!-- <input type="submit" class="btn btn-success btn-lg rounded-end-pill" name="subscribe" id="subscribe" value="Subscribe"> -->
                         </div>
                     </form>

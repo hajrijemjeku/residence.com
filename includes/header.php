@@ -1,14 +1,22 @@
 <?php
 session_start();
+ob_start();
 // session_destroy();
 include 'db.php';
 spl_autoload_register(function ($class_name) {
     include $class_name . '.php';
 });
 $base_url = 'http://localhost/php/yv/newProjectPHP/';
+
+//addlimit = 3 per reviews tek index.php;
+if (basename($_SERVER['SCRIPT_FILENAME']) !== "index.php") {
+    $_SESSION['addlimit'] = 3;
+}
+// echo (basename($_SERVER['SCRIPT_FILENAME'])); //kthen emrin e file (pjesen e fundit dmth te url) ku e kemi shenu kodin
 ?>
 
 <?php
+
 
 if(isset($_GET['action']) && $_GET['action'] == 'logout'){
 
@@ -33,7 +41,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'logout'){
     <title>residence.com</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/testimonials/testimonial-3/assets/css/testimonial-3.css" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- jQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -109,6 +117,13 @@ if(isset($_GET['action']) && $_GET['action'] == 'logout'){
             </div>
         </nav>
     </header>
+    <section class="z-index:1;">
+    <button type="button" class="btn btn-sm btn-outline-warning rounded-circle " onClick="history.go(-1)" style="position:fixed; margin:40px; padding:10px; z-index:2;">Prev</button>
+
+    </section>
+    
+    
+   
 </body>
 </html>
 

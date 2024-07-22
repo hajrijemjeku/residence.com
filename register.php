@@ -15,13 +15,21 @@ if(isset($_POST['register-btn']) ){
         if(filter_var($email, FILTER_VALIDATE_EMAIL)){
             $password = password_hash($password, PASSWORD_BCRYPT);
             $crudObj = new CRUD($pdo);
-            if($registerUser = $crudObj->insert('users',['name','surname','email','password'],[$name,$surname, $email, $password])){
-                
-                header('Location:login.php');
-                // <div class='alert alert-success'><h3>Registered successfully!</h3></div>
+            $allusers = $crudObj->select('users',[],['email'=> $email],'','');
+            $allusers = $allusers->fetch();
+            
+            if($allusers){
+                $errors[] = 'Ths email is already registered';
             }else{
-                $errors[] = 'Something went wrong';
+                if($registerUser = $crudObj->insert('users',['name','surname','email','password'],[$name,$surname, $email, $password])){
+                
+                    header('Location:login.php');
+                    // <div class='alert alert-success'><h3>Registered successfully!</h3></div>
+                }else{
+                    $errors[] = 'Something went wrong';
+                }
             }
+            
         }else{
             $errors[] = 'Email was not valid';
         }

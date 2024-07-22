@@ -1,9 +1,19 @@
 <?php include('includes/header.php'); ?>
 
+<?php
+if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true){
+
+
+}
+
+?>
 
 <section class="dashboard py-5">
     <div class="container">
-        <?php if(isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1): ?>
+        <?php 
+            if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true):
+            if(isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1): 
+        ?>
         <div class="row">
             <div class="col-md-3">
                 <div class="card">
@@ -19,8 +29,19 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <a class="text-decoration-none fs-5 link-secondary" href="manageReviews.php">Manage Reviews</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <?php endif; ?>
+        <?php else:
+            header('location:index.php');
+        ?>
+
+        <?php endif; endif; ?>
     </div>
 </section>
 

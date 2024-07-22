@@ -1,47 +1,91 @@
+<?php
+include_once 'crud.php';
 
-<!-- <footer class="mt-5 bg-light py-3">
-    <section class="footer py-3 d-flex">
-        <div class="col col-4 col-lg-4 col-md-4 col-sm-12 px-5" style="background-color:blanchedalmond;">
-            <h1 class="fs-6 text-secondary mb-0"><a href="index.php">residence.com</a></h1>
-            <p class="fs-6 text-secondary mb-0"> &copy; 2024 residence.com  Te gjitha te drejtat te rezervuara.</p>
+$errors = [];
 
-        </div>
-        <div class="col col-4 col-lg-4 col-md-4 col-sm-12 px-5" style="background-color:pink;">
-            <h1 class="fs-6 text-secondary mb-0"><a href="#">Facebook</a></h1>
-            <h1 class="fs-6 text-secondary mb-0"><a href="#">Instagram</a></h1>
-            <h1 class="fs-6 text-secondary mb-0"><a href="#">Tiktok</a></h1>
-            <h1 class="fs-6 text-secondary mb-0"><a href="#">Twitter(X)</a></h1>
+if(isset($_POST['subscribe'])) {
+    $email = $_POST['email'];
+
+    if(!empty($email)) {
+        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $crudObj = new CRUD($pdo);
+            $subscribers = $crudObj->select('subscribers', [], ['email'=>$email], 1, '');
+            $subscribers = $subscribers->fetch();
+
+            if(empty($subscribers)) {
+                $subscribe = $crudObj->insert('subscribers', ['email'], [$email]);
+                if($subscribe) {
+                    // Success scenario
+                    // Perform redirection
+                    header('Location: index.php');
+                    exit;
+                } else {
+                    $errors[] = 'Something went wrong';
+                }
+            } else {
+                $errors[] = 'This email is already subscribed';
+            }
+        } else {
+            $errors[] = 'Invalid email';
+        }
+    } else {
+        $errors[] = 'Please enter an email address';
+    }
+}
+
+// If there are errors, display them
+if(!empty($errors)) {
+    // You can choose to display errors in various ways, like alert boxes or inline messages.
+    echo '<script type="text/javascript">alert("INFO: '.$errors[0].'");</script>';
+    // Redirect to index.php if needed
+    // header('Location: ../index.php');
+    // exit;
+}
 
 
-        </div>
-        <div class="col col-4 col-lg-4 col-md-4 col-sm-12 px-5" style="background-color:burlywood;">
-        
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control form-control-sm" placeholder="Enter your email" aria-label="Enter your email" aria-describedby="button-addon2">
-                            <button class="btn btn-primary btn-sm" type="button" id="button-addon2">Subscribe</button>
-                    <div class="col-12 col-md-6">
-                        <h5 class="text-white">Contact Us</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="#" class="text-muted">Email: info@example.com</a></li>
-                            <li><a href="#" class="text-muted">Phone: +1234567890</a></li>
-                            <li><a href="#" class="text-muted">Address: 123 Street, City, Country</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+// $errors = [];
+
+// if(isset($_POST['subscribe'])) {
+//     $email = $_POST['email'];
+
+//     if(!empty($email)) {
+//         if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+//             $crudObj = new CRUD($pdo);
+//             $subscribers = $crudObj->select('subscribers', [], ['email'=>$email], 1, '');
+//             $subscribers = $subscribers->fetch();
+
+//             if(empty($subscribers)) {
+//                 $subscribe = $crudObj->insert('subscribers', ['email'], [$email]);
+//                 if($subscribe) {
+//                     // Subscription successful
+//                     echo '<div class="success-message">You have successfully subscribed!</div>';
+//                 } else {
+//                     $errors[] = 'Something went wrong with the subscription.';
+//                 }
+//             } else {
+//                 $errors[] = 'This email is already subscribed.';
+//             }
+//         } else {
+//             $errors[] = 'Invalid email format.';
+//         }
+//     } else {
+//         $errors[] = 'Please enter your email address.';
+//     }
+// }
 
 
-        </div>
-        
 
-    </section>
-    </footer> -->
+
+?>
 
     <footer class="mt-5 bg-light py-3">
     <div class="container mt-4">
+    <?php
+    // Display errors if there are any
+    //if(!empty($errors)) {
+      //  echo '<div class="error-message">' . implode('<br>', $errors) . '</div>';
+    //}
+    ?>
         <div class="row">
             <div class="col-sm-12 col-md-4 mb-4" >
                 <h1 class="fs-6 text-secondary mt-3"><a href="index.php" class="text-decoration-none text-success">residence.com</a></h1>
@@ -59,10 +103,12 @@
             </div>
 
             <div class="col-sm-12 col-md-4 mb-4" >
-                <div class="input-group mt-3 w-75 mx-auto">
-                    <input type="email" class="form-control form-control-sm " placeholder="Enter your email" aria-label="Enter your email" aria-describedby="button-addon2">
-                    <button class="btn btn-success btn-sm" type="button" id="button-addon2">Subscribe</button>
-                </div>
+                <form action="<?= $_SERVER['PHP_SELF']?>" method="POST">
+                    <div class="input-group mt-3 w-75 mx-auto">
+                        <input type="email" name="email" class="form-control form-control-sm " placeholder="Enter your email" aria-label="Enter your email" aria-describedby="button-addon2">
+                        <button class="btn btn-success btn-sm" type="submit" name="subscribe" id="button-addon2">Subscribe</button>
+                    </div>
+                </form>
                 <ul class="list-unstyled text-white w-75  mt-3 mx-auto">
                     <li><a href="#" class="text-decoration-none text-success">info@example.com</a></li>
                     <li><a href="#" class="text-decoration-none text-success">1234567890</a></li>

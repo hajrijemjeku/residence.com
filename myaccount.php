@@ -1,9 +1,11 @@
-<?php include('includes/header.php'); ?>
+<?php include('includes/header.php'); 
+//  ob_start()
+?>
 
 <?php
 
-$errors = []    ;
- $account = (new CRUD($pdo))->select('users',[],['id'=> $_SESSION['user_id']],1,'');
+$errors = [];
+$account = (new CRUD($pdo))->select('users',[],['id'=> $_SESSION['user_id']],1,'');
                   
 if($account){
     $account = $account->fetch();
@@ -23,16 +25,12 @@ if(isset($_POST['update-btn'])){
         $_SESSION['name'] = $name;
         $_SESSION['surname'] = $surname;
         $_SESSION['email'] = $email;
-        header('Location:residences.php');
-        exit;
+        
+        header('Location:myaccount.php');
     }
     else{
         $errors[] = 'Something went wrong during modification';
     }
-    
-
-    
-
 }
                  
 
@@ -40,7 +38,7 @@ if(isset($_POST['update-btn'])){
 
 
 <section class="login my-5">
-    <div class="container  d-flex justify-content-center">
+    <div class="container d-flex justify-content-center">
         <div class="login-form w-50  p-4 shadow rounded bg-light">
             <div class="text-center mb-4">
                 <h3 class="mb-3 text-secondary">Llogaria</h3>
@@ -53,7 +51,7 @@ if(isset($_POST['update-btn'])){
             </div>
             <?php endif; ?>
            
-            <form method="POST" action="<?php $_SERVER['PHP_SELF'] ?>">
+            <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" class="form-control" id="name"  value="<?= $account['name'] ?>" required>
@@ -64,38 +62,77 @@ if(isset($_POST['update-btn'])){
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <input type="email" name="email" class="form-control" id="email" value="<?= $account['email'] ?>"  aria-describedby="emailHelp">
+                    <input type="email" name="email" class="form-control" id="email" value="<?= $account['email'] ?>" required aria-describedby="emailHelp">
                     <div id="divemail" class="form-text">We'll never share your email with anyone else.</div>
-                </div>
-                <!-- <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" id="password"  value="<?//= $account['password'] ?>">
-                </div> -->
-                <div class="mb-3 form-check">
-                    <input type="checkbox" name="remember" class="form-check-input" id="remember" value="1">
-                    <label for="remember" class="form-check-label">Remember me</label>
                 </div>
                 <div class="mb-3">
                     <button type="submit" name="update-btn" class="btn btn-success w-50 mb-3">Modifiko</button>
                     <?php if(isset($_SESSION['isadmin']) && $_SESSION['isadmin']==0): ?>
-                    <button type="submit" name="delete-btn" class="btn btn-danger w-50">Fshij</button>
+                    <button type="button" name="delete-btn" class="btn btn-danger w-50"  data-bs-toggle="modal" data-bs-target="#deleteUserModal<?= $account['id'] ?>" data-residence-id="<?= $account['id'] ?>">Fshij</button>
                     <?php endif; ?>
                 </div>
-            
-
-           
             </form>
-            <?//php endforeach; ?>
-        </div>
+            <div class="modal fade" id="deleteUserModal<?= $account['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteUserModalLabel<?= $account['id'] ?>">Confirm with password u wanna delete your '<?= $account['name'];?>' account </h5>
+                            <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="deleteForm" action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="password">Password:</label>
+                                    <input type="password" name="password" id="password" required >
+                                </div>
+                                <input type="hidden" name="id" id="id" value="<?= $account['id'] ?>">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button name="deleteacc" type="submit" class="btn btn-primary">Delete Account</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> 
+         </div>
     </div>
-    
-
 </section>
 
 
+<?php 
+    if(isset($_POST['deleteacc'])) {
 
+        $password = $_POST['password'];
+        $user_id = $account['id'];
 
+        if(!empty($password)){
 
+            $user = (new CRUD($pdo))->select('users',[],['id'=> $user_id],1,'');
+            $user = $user->fetch();
+
+            if(password_verify($password, $user['password'])){
+                $deleteuser = (new CRUD($pdo))->delete('users','id',$user_id);
+
+                session_unset();      
+                session_destroy();
+                unset($_SESSION['user_id']);
+                unset($_SESSION['logged_in']);
+                unset($_SESSION['is_admin']);
+                unset($_SESSION['email']);
+                header('Location: index.php');
+                exit;
+                
+            }else{
+                $errors[] = 'something went wrong';
+            }
+            
+        }
+    }
+
+?>
 
 
 
