@@ -36,12 +36,9 @@
                     <p class="card-text" name="status">Status: <?php echo  $residence['status']; ?> </p>
                     <p class="card-text" name="rooms">Pershkrimi: <?php echo  $residence['description']; ?> </p>
                     <p class="card-text" name="squaremeters">Hapesira: <?php echo  $residence['squaremeters'] .'m&sup2;, Cmimi:' . $residence['price']; ?>&euro;</p>
-                    <!-- <a href="<?//=$base_url?>residencedetails.php/<?//= $residence['id'] ?>" class="btn btn-outline-info" >View Details</a> -->
-                     <!-- <button type="submit" class="card-text btn btn-md btn-secondary" name="view-reviews">View Reviews</button> -->
+                    
                     <a href="?action=viewreviews&id=<?=$residence['id'];?>" class="btn btn-outline-info" name="view-reviews">View Reviews</a>
-                    <!-- <?php //if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true):?>
-                       <a href="<?//=$base_url?>residencedetails.php?id=<?//= $residence['id'] ?>" class="btn btn-outline-success" name="addreview">Add a review</a> -->
-                    <?php //endif; ?>
+                    
 
                     
             </div>

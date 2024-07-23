@@ -96,7 +96,6 @@ if(isset($_POST['edit-btn'])){
                         
                     <h6 class=" mb-5 text-secondary text-end"><?php $createdAt = $getreview['created_at']; $createdAt = date('m/Y',strtotime($createdAt)); echo $createdAt; ?></h6>
                         <figure>
-                        <!-- <img class="img-fluid rounded rounded-circle mb-4 border border-5 w-50 " style="margin-left: 70px;"  loading="lazy" src="./assets/images/slider/<?php //if($review['residence_id']==$residence['id']) return $residence['image'];?>" alt=""> -->
                         <img class="img-fluid rounded rounded-circle mb-4 border border-5 w-50"   loading="lazy" src="./assets/images/residences/<?= $residencereview['image'];?>" alt="">
                         <figcaption>
                             <div class="bsb-ratings text-warning mb-3" data-bsb-star="<?=$getreview['rating']?>" data-bsb-star-off="<?= ($getreview['rating']===5) ? 0 : (5 - $getreview['rating']) ?>"></div>
