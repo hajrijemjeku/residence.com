@@ -4,6 +4,12 @@
 $errors = [];
 ?>
 <?php
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
+?>
+
+<?php
+//if((isset($_SESSION['logged_in'])) && ($_SESSION['logged_in'] == true)): 
 
 if(isset($_POST['register-btn'])){
 

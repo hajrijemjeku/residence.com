@@ -4,6 +4,9 @@
 $errors = [];
 
 $users = (new CRUD($pdo))->select('users',[],[],'','');
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
+
 
 $users = $users->fetchAll();
 

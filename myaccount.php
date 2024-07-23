@@ -6,6 +6,10 @@
 
 $errors = [];
 $account = (new CRUD($pdo))->select('users',[],['id'=> $_SESSION['user_id']],1,'');
+
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
+
                   
 if($account){
     $account = $account->fetch();

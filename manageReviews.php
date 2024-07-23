@@ -2,6 +2,9 @@
 
 <?php
 $errors = [];
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
+
 
 $reviews = (new CRUD($pdo))->select('reviews',[],[],'','');
 

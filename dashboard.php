@@ -1,10 +1,8 @@
 <?php include('includes/header.php'); ?>
 
 <?php
-if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true){
-
-
-}
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
 
 ?>
 

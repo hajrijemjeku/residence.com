@@ -2,6 +2,8 @@
 
 <?php
 $errors = [];
+if(!(isset($_SESSION['logged_in'])) && !($_SESSION['logged_in'] == true)){
+    header('Location:login.php');}
 
 $myresidences = (new CRUD($pdo))->select('residence',[],['userid'=>$_SESSION['user_id']],'','');
 
