@@ -46,8 +46,8 @@
 Per te ekzekutuar `residence.com` lokal, ndiqni keto hapa:
 1. Klononi repositorin: `git clone https://github.com/hajrijemjeku/residence.com`
 2. Shkoni ne drejtorine e projektit: `cd residence.com`
-3. Importoni skemen e bazes se te dhenave dhe te dhenat fillestare nga `database.sql` ne bazen tuaj MySQL.
-4. Konfiguroni lidhjen me bazen e te dhenave ne `db.php`.
+3. Importoni skemen e bazes se te dhenave dhe te dhenat fillestare nga `sql/residencedb.sql` ne bazen tuaj MySQL.
+4. Konfiguroni lidhjen me bazen e te dhenave ne `includes/db.php`.
 5. Startoni serverin tuaj PHP per zhvillim ose konfiguroni me Apache/Nginx sipas nevojes.
 
 ## Perdorimi
